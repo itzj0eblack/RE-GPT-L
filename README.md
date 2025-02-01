@@ -1,6 +1,6 @@
 GPT-L Console Assistant
 =======================
-![GPTL.py Screenshot](images/img.jpg)
+![GPTL.py Screenshot](images/image.jpg)
 
 What's New in This Version?
 ---------------------------
