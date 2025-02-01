@@ -2,6 +2,9 @@ GPT-L Console Assistant
 =======================
 ![GPTL.py Screenshot](images/image.jpg)
 
+
+!REMEMBER DOUBLE ENTRE TO SEND TEXT !!!
+
 What's New in This Version?
 ---------------------------
 
