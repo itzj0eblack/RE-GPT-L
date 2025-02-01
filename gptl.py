@@ -3,7 +3,6 @@ import time
 import sys
 import random
 
-# ANSI color codes for console text formatting
 RESET = "\033[0m"
 BOLD = "\033[1m"
 PINK = "\033[95m"
@@ -13,14 +12,12 @@ SUCCESS = "\033[32m"
 ERROR = "\033[31m"
 INFO = "\033[34m"
 
-# Chat bubble styling
 def create_chat_bubble(message, sender="User"):
     if sender == "GPT-L":
         return f"{PINK}[GPT-L] >{RESET} {message}"
     else:
         return f"{PURPLE}[You] >{RESET} {message}"
 
-# Function to simulate typing animation
 def typing_animation(text, prefix="", prefix_color=WHITE, text_color=WHITE, normal_delay=0.05, fast_delay=0.005, pause_chance=0.15, short_pause=0.1, long_pause=1.5):
     pause_counter = 0
     speeding_up = False
@@ -59,7 +56,6 @@ def typing_animation(text, prefix="", prefix_color=WHITE, text_color=WHITE, norm
 
     print(RESET)
 
-# Function to get multiline input from user
 def get_multiline_input(prompt):
     print(prompt)
     lines = []
@@ -70,7 +66,6 @@ def get_multiline_input(prompt):
         lines.append(line)
     return "\n".join(lines)
 
-# Welcome messages
 welcome_messages = [
     "Hello! How can I assist you today?",
     "Welcome! I'm here to help. What do you need?",
@@ -81,10 +76,8 @@ welcome_messages = [
     "Welcome! Powered by Oslositz's expertise. What do you need today?"
 ]
 
-# Display welcome message
 typing_animation(random.choice(welcome_messages), prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
 
-# Network error messages
 network_error_messages = [
     "Please check your network so that I can work properly.",
     "Unable to connect to the internet. Kindly verify your connection.",
@@ -113,12 +106,10 @@ Available commands:
         url = f"https://text.pollinations.ai/{user_input}"
 
         try:
-            # Make the request without the loading animation
             response = requests.get(url, timeout=5)
             response.raise_for_status()
             content = response.text.strip()
 
-            # Check if the response contains valid content or HTML
             if content.startswith("<!DOCTYPE html>") or "html" in content:
                 typing_animation(f"{ERROR}It seems there was an issue with the request. Please try again.{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
             else:
