@@ -1,5 +1,6 @@
 GPT-L Console Assistant
 =======================
+![GPTL.py Screenshot](images/img.jpg)
 
 What's New in This Version?
 ---------------------------
@@ -49,12 +50,3 @@ python gptl.py
 4. **Talk to GPT-L**:
 Now you're all set! Type your questions, and GPT-L will type back in a fun, animated way. If you want to quit, just type `exit`.
 
-Example Chat
--------------
-
-::
-   GPT-L> Hey, I’m GPT-L! How can I assist you today? 😄
-   You> I need advice on learning Python
-   GPT-L> Absolutely! Python is a great choice! It’s beginner-friendly and super powerful. What kind of advice are you looking for? More on basics, or diving into projects?
-
-L
