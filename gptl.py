@@ -3,24 +3,24 @@ import time
 import sys
 import random
 
+# ANSI color codes for console text formatting
 RESET = "\033[0m"
 BOLD = "\033[1m"
 PINK = "\033[95m"
 PURPLE = "\033[35m"
 WHITE = "\033[97m"
+SUCCESS = "\033[32m"
+ERROR = "\033[31m"
+INFO = "\033[34m"
 
-banner = rf"""{BOLD}{PINK}
-  _____________________________      .____     
- /  _____/\______   \__    ___/      |    |    
-/   \  ___ |     ___/ |    |  ______ |    |    
-\    \_\  \|    |     |    | /_____/ |    |___ 
- \______  /|____|     |____|         |_______ \\
-        \/                                   \/
-{RESET}
-"""
+# Chat bubble styling
+def create_chat_bubble(message, sender="User"):
+    if sender == "GPT-L":
+        return f"{PINK}[GPT-L] >{RESET} {message}"
+    else:
+        return f"{PURPLE}[You] >{RESET} {message}"
 
-print(banner)
-
+# Function to simulate typing animation
 def typing_animation(text, prefix="", prefix_color=WHITE, text_color=WHITE, normal_delay=0.05, fast_delay=0.005, pause_chance=0.15, short_pause=0.1, long_pause=1.5):
     pause_counter = 0
     speeding_up = False
@@ -58,7 +58,19 @@ def typing_animation(text, prefix="", prefix_color=WHITE, text_color=WHITE, norm
             speed_up_end_time = current_time + speed_up_duration
 
     print(RESET)
-  
+
+# Function to get multiline input from user
+def get_multiline_input(prompt):
+    print(prompt)
+    lines = []
+    while True:
+        line = input()
+        if line.strip() == "":
+            break
+        lines.append(line)
+    return "\n".join(lines)
+
+# Welcome messages
 welcome_messages = [
     "Hello! How can I assist you today?",
     "Welcome! I'm here to help. What do you need?",
@@ -69,8 +81,10 @@ welcome_messages = [
     "Welcome! Powered by Oslositz's expertise. What do you need today?"
 ]
 
+# Display welcome message
 typing_animation(random.choice(welcome_messages), prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
 
+# Network error messages
 network_error_messages = [
     "Please check your network so that I can work properly.",
     "Unable to connect to the internet. Kindly verify your connection.",
@@ -81,24 +95,43 @@ network_error_messages = [
 
 while True:
     try:
-        user_input = input(f"{BOLD}{PURPLE}You>{RESET} ")
+        user_input = get_multiline_input(f"{BOLD}{PURPLE}You>{RESET} ")
 
         if user_input.lower() == "exit":
             typing_animation("Goodbye! Have a nice day!", prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+            time.sleep(1)
             break
+        elif user_input.lower() == "help":
+            help_message = """
+Available commands:
+- exit: Exit the program.
+- help: Display this help message.
+"""
+            typing_animation(help_message, prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+            continue
 
         url = f"https://text.pollinations.ai/{user_input}"
 
         try:
+            # Make the request without the loading animation
             response = requests.get(url, timeout=5)
-            if response.status_code == 200:
-                content = response.text
-                typing_animation(content, prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+            response.raise_for_status()
+            content = response.text.strip()
+
+            # Check if the response contains valid content or HTML
+            if content.startswith("<!DOCTYPE html>") or "html" in content:
+                typing_animation(f"{ERROR}It seems there was an issue with the request. Please try again.{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
             else:
-                typing_animation("No content found for your request.", prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
-        except requests.exceptions.RequestException:
+                typing_animation(content, prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+
+        except requests.exceptions.HTTPError as e:
+            typing_animation(f"{ERROR}API Error: {e}{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
+        except requests.exceptions.Timeout:
+            typing_animation(f"{ERROR}Request timed out. Please try again.{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
+        except requests.exceptions.RequestException as e:
             error_message = random.choice(network_error_messages)
-            typing_animation(error_message, prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+            typing_animation(f"{ERROR}{error_message}{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
+
     except KeyboardInterrupt:
-        typing_animation("Session terminated by user.", prefix="GPT-L> ", prefix_color=PINK, text_color=WHITE)
+        typing_animation(f"{ERROR}Session terminated by user.{RESET}", prefix="GPT-L> ", prefix_color=PINK, text_color=ERROR)
         break
